@@ -95,6 +95,7 @@ class GameState {
         // Check for game over (only if not animating)
         if (!this.lineDetector.isAnimating() && this.lineDetector.isGameOver()) {
             this.state = CONFIG.STATE.GAME_OVER;
+            if (soundManager) soundManager.play('gameover');
         }
     }
 
@@ -126,6 +127,7 @@ class GameState {
                 // Settle the piece
                 this.tetrominoFactory.settlePiece(this.activePiece);
                 this.activePiece = null;
+                if (soundManager) soundManager.play('touch');
             }
         } else {
             // Piece is still moving or can move down - reset settle timer

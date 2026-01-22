@@ -173,6 +173,7 @@ class InputHandler {
         if (key === 'ArrowUp' && now - this.lastRotateTime > CONFIG.TIMING.ROTATION_COOLDOWN) {
             if (tetrominoFactory.rotatePiece(activePiece, true)) {
                 this.lastRotateTime = now;
+                if (soundManager) soundManager.play('rotate');
                 // Reset settle timer when piece is rotated
                 const userData = activePiece.getUserData();
                 if (userData) {

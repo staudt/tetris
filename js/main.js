@@ -7,6 +7,7 @@ let tetrominoFactory;
 let lineDetector;
 let gameState;
 let inputHandler;
+// soundManager is declared in sound.js
 
 // Timing
 let lastFrameTime = 0;
@@ -67,6 +68,7 @@ function init() {
     lineDetector = new LineDetector(physicsWorld);
     gameState = new GameState(physicsWorld, tetrominoFactory, lineDetector);
     inputHandler = new InputHandler(gameState);
+    soundManager = new SoundManager();
 
     console.log('Game initialized successfully!');
     console.log('Press any key to start');

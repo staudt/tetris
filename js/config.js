@@ -73,6 +73,12 @@ const CONFIG = {
         PLAYING: 'playing',
         PAUSED: 'paused',
         GAME_OVER: 'gameOver'
+    },
+
+    // Sound Settings
+    SOUND: {
+        ENABLED: true,
+        LINE_CLEAR_DELAY: 100  // ms between sequential line sounds
     }
 };
 

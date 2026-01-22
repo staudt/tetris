@@ -276,6 +276,11 @@ class LineDetector {
             return;
         }
 
+        // Play line clear sound(s) sequentially
+        if (soundManager) {
+            soundManager.playSequential('line', completedRows.length, CONFIG.SOUND.LINE_CLEAR_DELAY);
+        }
+
         // Start blinking animation
         this.pendingClear = {
             fixtures: fixturesToDestroy,
@@ -312,6 +317,7 @@ class LineDetector {
         const newLevel = Math.floor(gameState.lines / CONFIG.SCORE.LINES_PER_LEVEL) + 1;
         if (newLevel > gameState.level) {
             gameState.level = newLevel;
+            if (soundManager) soundManager.play('levelup');
         }
     }
 
