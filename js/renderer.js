@@ -263,9 +263,9 @@ class Renderer {
         this.ctx.fillText('PHYSICS', centerX, centerY - 40);
         this.ctx.fillText('TETRIS', centerX, centerY - 12);
 
-        // Press Enter text
+        // Press any key text
         this.ctx.font = '16px monospace';
-        this.ctx.fillText('Press ENTER', centerX, centerY + 40);
+        this.ctx.fillText('Press any key', centerX, centerY + 40);
         this.ctx.fillText('to play', centerX, centerY + 64);
         this.ctx.textAlign = 'left';
     }
@@ -302,7 +302,7 @@ class Renderer {
 
         this.ctx.font = '16px monospace';
         this.ctx.fillText('Score: ' + gameState.score, centerX, centerY + 16);
-        this.ctx.fillText('Press ENTER', centerX, centerY + 48);
+        this.ctx.fillText('Press any key', centerX, centerY + 48);
         this.ctx.textAlign = 'left';
     }
 

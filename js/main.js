@@ -23,7 +23,17 @@ function resizeCanvas() {
     const padding = 20;
     const border = 8;
     const availableWidth = window.innerWidth - padding - border;
-    const availableHeight = window.innerHeight - padding - border;
+
+    // Check if touch device (mobile controls visible) - multiple detection methods
+    const isTouchDevice = window.matchMedia('(pointer: coarse)').matches ||
+                          window.matchMedia('(any-pointer: coarse)').matches ||
+                          (window.matchMedia('(hover: none)').matches && window.innerWidth <= 1024) ||
+                          (window.innerWidth <= 768 && window.innerHeight <= 1024);
+
+    // Smaller controls on very small screens
+    const mobileControlsHeight = isTouchDevice ? (window.innerHeight <= 600 ? 130 : 160) : 0;
+
+    const availableHeight = window.innerHeight - padding - border - mobileControlsHeight;
 
     // Calculate integer scale factor that fits in window
     const scaleX = Math.floor(availableWidth / canvasWidth);
@@ -59,7 +69,7 @@ function init() {
     inputHandler = new InputHandler(gameState);
 
     console.log('Game initialized successfully!');
-    console.log('Press ENTER to start');
+    console.log('Press any key to start');
 
     // Start game loop
     requestAnimationFrame(gameLoop);

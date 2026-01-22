@@ -63,3 +63,149 @@ canvas {
     -moz-user-select: none;
     user-select: none;
 }
+
+/* Mobile Touch Controls */
+#mobile-controls {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    padding: 0 20px;
+    justify-content: space-between;
+    align-items: flex-end;
+    pointer-events: none;
+    z-index: 100;
+}
+
+/* Show controls on touch devices - multiple detection methods for reliability */
+@media (pointer: coarse), (any-pointer: coarse), (hover: none) and (max-width: 1024px) {
+    #mobile-controls {
+        display: flex;
+    }
+
+    #game-container {
+        height: calc(100vh - 180px);
+        align-items: flex-start;
+        padding-top: 20px;
+    }
+}
+
+/* Ensure controls are visible on small screens regardless of pointer type */
+@media (max-width: 768px) and (max-height: 1024px) {
+    #mobile-controls {
+        display: flex;
+    }
+
+    #game-container {
+        height: calc(100vh - 180px);
+        align-items: flex-start;
+        padding-top: 20px;
+    }
+}
+
+/* D-Pad Container */
+#dpad {
+    display: grid;
+    grid-template-columns: 60px 60px 60px;
+    grid-template-rows: 60px 60px;
+    gap: 4px;
+    pointer-events: auto;
+}
+
+/* D-Pad Buttons */
+.dpad-btn {
+    width: 60px;
+    height: 60px;
+    background-color: var(--gb-dark);
+    border: 3px solid var(--gb-darkest);
+    border-radius: 8px;
+    color: var(--gb-lightest);
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+}
+
+.dpad-btn:active {
+    background-color: var(--gb-darkest);
+    transform: scale(0.95);
+}
+
+/* Position D-Pad buttons */
+#btn-up {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+#btn-left {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+#btn-right {
+    grid-column: 3;
+    grid-row: 2;
+}
+
+#btn-down {
+    grid-column: 2;
+    grid-row: 2;
+}
+
+/* Action Button (Start/Pause) */
+#btn-action {
+    width: 80px;
+    height: 80px;
+    background-color: var(--gb-dark);
+    border: 3px solid var(--gb-darkest);
+    border-radius: 50%;
+    color: var(--gb-lightest);
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    pointer-events: auto;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+}
+
+#btn-action:active {
+    background-color: var(--gb-darkest);
+    transform: scale(0.95);
+}
+
+/* Smaller controls for very small screens */
+@media (max-height: 600px) {
+    #mobile-controls {
+        bottom: 10px;
+    }
+
+    #game-container {
+        height: calc(100vh - 140px);
+        padding-top: 10px;
+    }
+
+    #dpad {
+        grid-template-columns: 50px 50px 50px;
+        grid-template-rows: 50px 50px;
+        gap: 3px;
+    }
+
+    .dpad-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+
+    #btn-action {
+        width: 65px;
+        height: 65px;
+        font-size: 10px;
+    }
+}

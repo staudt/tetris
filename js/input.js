@@ -6,6 +6,7 @@ class InputHandler {
         this.keys = {};
         this.lastMoveTime = 0;
         this.lastRotateTime = 0;
+        this.lastKnownState = null;
 
         this.setupEventListeners();
     }
@@ -13,30 +14,137 @@ class InputHandler {
     setupEventListeners() {
         window.addEventListener('keydown', (e) => this.handleKeyDown(e));
         window.addEventListener('keyup', (e) => this.handleKeyUp(e));
+
+        // Mobile touch controls
+        this.setupTouchControls();
+    }
+
+    setupTouchControls() {
+        // D-Pad buttons
+        const dpadButtons = document.querySelectorAll('.dpad-btn');
+        dpadButtons.forEach(btn => {
+            const key = btn.dataset.key;
+
+            btn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                this.handleKeyDown({ key, preventDefault: () => {} });
+            }, { passive: false });
+
+            btn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                this.handleKeyUp({ key });
+            }, { passive: false });
+
+            // Also handle mouse for testing on desktop
+            btn.addEventListener('mousedown', (e) => {
+                this.handleKeyDown({ key, preventDefault: () => {} });
+            });
+
+            btn.addEventListener('mouseup', (e) => {
+                this.handleKeyUp({ key });
+            });
+
+            btn.addEventListener('mouseleave', (e) => {
+                this.handleKeyUp({ key });
+            });
+        });
+
+        // Action button (Start/Pause)
+        const actionBtn = document.getElementById('btn-action');
+        if (actionBtn) {
+            actionBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                this.handleActionButton();
+            }, { passive: false });
+
+            actionBtn.addEventListener('click', (e) => {
+                this.handleActionButton();
+            });
+        }
+    }
+
+    handleActionButton() {
+        // Determine action based on game state
+        if (this.gameState.state === CONFIG.STATE.MENU) {
+            this.gameState.start();
+        } else if (this.gameState.state === CONFIG.STATE.PLAYING) {
+            this.gameState.togglePause();
+        } else if (this.gameState.state === CONFIG.STATE.PAUSED) {
+            this.gameState.togglePause();
+        } else if (this.gameState.state === CONFIG.STATE.GAME_OVER) {
+            this.gameState.reset();
+        }
+        this.updateActionButtonLabel();
+    }
+
+    updateActionButtonLabel() {
+        const actionBtn = document.getElementById('btn-action');
+        if (!actionBtn) return;
+
+        switch (this.gameState.state) {
+            case CONFIG.STATE.MENU:
+                actionBtn.textContent = 'START';
+                break;
+            case CONFIG.STATE.PLAYING:
+                actionBtn.textContent = 'PAUSE';
+                break;
+            case CONFIG.STATE.PAUSED:
+                actionBtn.textContent = 'PLAY';
+                break;
+            case CONFIG.STATE.GAME_OVER:
+                actionBtn.textContent = 'RETRY';
+                break;
+        }
+    }
+
+    // Map WASD to arrow keys
+    normalizeKey(key) {
+        const keyMap = {
+            'w': 'ArrowUp',
+            'W': 'ArrowUp',
+            'a': 'ArrowLeft',
+            'A': 'ArrowLeft',
+            's': 'ArrowDown',
+            'S': 'ArrowDown',
+            'd': 'ArrowRight',
+            'D': 'ArrowRight'
+        };
+        return keyMap[key] || key;
+    }
+
+    // Check if key is a game control key
+    isGameKey(key) {
+        const gameKeys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', ' ', 'Escape', 'Enter', 'w', 'W', 'a', 'A', 's', 'S', 'd', 'D'];
+        return gameKeys.includes(key);
     }
 
     handleKeyDown(e) {
         // Prevent default for game keys
-        if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', ' ', 'Escape', 'Enter'].includes(e.key)) {
+        if (this.isGameKey(e.key)) {
             e.preventDefault();
         }
 
+        // Normalize WASD to arrow keys
+        const key = this.normalizeKey(e.key);
+
         // Store key state
-        this.keys[e.key] = true;
+        this.keys[key] = true;
 
         const now = Date.now() / 1000; // Convert to seconds
 
         // Handle state-specific controls
         if (this.gameState.state === CONFIG.STATE.GAME_OVER) {
-            if (e.key === 'Enter') {
+            if (this.isGameKey(e.key)) {
                 this.gameState.reset();
+                this.updateActionButtonLabel();
             }
             return;
         }
 
         if (this.gameState.state === CONFIG.STATE.MENU) {
-            if (e.key === 'Enter' || e.key === ' ') {
+            if (this.isGameKey(e.key)) {
                 this.gameState.start();
+                this.updateActionButtonLabel();
             }
             return;
         }
@@ -44,6 +152,7 @@ class InputHandler {
         // Pause/Resume
         if (e.key === 'Escape') {
             this.gameState.togglePause();
+            this.updateActionButtonLabel();
             return;
         }
 
@@ -61,7 +170,7 @@ class InputHandler {
         const tetrominoFactory = this.gameState.tetrominoFactory;
 
         // Rotation (with cooldown)
-        if (e.key === 'ArrowUp' && now - this.lastRotateTime > CONFIG.TIMING.ROTATION_COOLDOWN) {
+        if (key === 'ArrowUp' && now - this.lastRotateTime > CONFIG.TIMING.ROTATION_COOLDOWN) {
             if (tetrominoFactory.rotatePiece(activePiece, true)) {
                 this.lastRotateTime = now;
                 // Reset settle timer when piece is rotated
@@ -73,18 +182,25 @@ class InputHandler {
         }
 
         // Hard drop
-        if (e.key === ' ') {
+        if (key === ' ') {
             tetrominoFactory.hardDropPiece(activePiece);
             this.gameState.spawnNextPiece();
         }
     }
 
     handleKeyUp(e) {
-        this.keys[e.key] = false;
+        const key = this.normalizeKey(e.key);
+        this.keys[key] = false;
     }
 
     // Update method called each frame
     update(deltaTime) {
+        // Keep action button label in sync with game state (only when state changes)
+        if (this.lastKnownState !== this.gameState.state) {
+            this.lastKnownState = this.gameState.state;
+            this.updateActionButtonLabel();
+        }
+
         if (this.gameState.state !== CONFIG.STATE.PLAYING) {
             return;
         }

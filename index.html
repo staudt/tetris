@@ -11,6 +11,20 @@
         <canvas id="gameCanvas" width="320" height="320"></canvas>
     </div>
 
+    <!-- Mobile Touch Controls -->
+    <div id="mobile-controls">
+        <!-- D-Pad on the left -->
+        <div id="dpad">
+            <button id="btn-up" class="dpad-btn" data-key="ArrowUp">&#9650;</button>
+            <button id="btn-left" class="dpad-btn" data-key="ArrowLeft">&#9664;</button>
+            <button id="btn-right" class="dpad-btn" data-key="ArrowRight">&#9654;</button>
+            <button id="btn-down" class="dpad-btn" data-key="ArrowDown">&#9660;</button>
+        </div>
+
+        <!-- Action button on the right -->
+        <button id="btn-action" data-key="Enter">START</button>
+    </div>
+
     <!-- Planck.js Physics Engine (Local) -->
     <script src="lib/planck.min.js"></script>
 
