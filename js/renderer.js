@@ -47,7 +47,7 @@ class Renderer {
         ctx.fillStyle = CONFIG.COLORS.DARKEST;
 
         // Create brick pattern
-        const brickSize = 4;
+        const brickSize = 8;
 
         // Top border
         for (let x = playOffsetX - blockSize; x < playOffsetX + playWidthPx + blockSize; x += brickSize) {
@@ -95,19 +95,19 @@ class Renderer {
         const panelY = CONFIG.GAME.UI_PANEL_Y;
 
         ctx.fillStyle = CONFIG.COLORS.DARKEST;
-        ctx.font = '8px monospace';
+        ctx.font = '16px monospace';
 
         // SCORE label
-        ctx.fillText('SCORE', panelX, panelY + 8);
+        ctx.fillText('SCORE', panelX, panelY + 16);
 
         // LEVEL label
-        ctx.fillText('LEVEL', panelX, panelY + 32);
+        ctx.fillText('LEVEL', panelX, panelY + 64);
 
         // LINES label
-        ctx.fillText('LINES', panelX, panelY + 56);
+        ctx.fillText('LINES', panelX, panelY + 112);
 
         // NEXT label
-        ctx.fillText('NEXT', panelX, panelY + 80);
+        ctx.fillText('NEXT', panelX, panelY + 160);
     }
 
     render(physicsWorld, gameState) {
@@ -178,7 +178,7 @@ class Renderer {
         this.ctx.save();
         this.ctx.fillStyle = color;
         this.ctx.strokeStyle = CONFIG.COLORS.DARKEST;
-        this.ctx.lineWidth = 1;
+        this.ctx.lineWidth = 2;
 
         this.ctx.beginPath();
 
@@ -214,34 +214,34 @@ class Renderer {
         const panelY = CONFIG.GAME.UI_PANEL_Y;
 
         this.ctx.fillStyle = CONFIG.COLORS.DARKEST;
-        this.ctx.font = '8px monospace';
+        this.ctx.font = '16px monospace';
 
         // Score value
-        this.ctx.fillText(gameState.score.toString().padStart(6, '0'), panelX, panelY + 20);
+        this.ctx.fillText(gameState.score.toString().padStart(6, '0'), panelX, panelY + 40);
 
         // Level value
-        this.ctx.fillText(gameState.level.toString().padStart(2, ' '), panelX + 8, panelY + 44);
+        this.ctx.fillText(gameState.level.toString().padStart(2, ' '), panelX + 16, panelY + 88);
 
         // Lines value
-        this.ctx.fillText(gameState.lines.toString().padStart(3, ' '), panelX + 8, panelY + 68);
+        this.ctx.fillText(gameState.lines.toString().padStart(3, ' '), panelX + 16, panelY + 136);
 
         // Draw next piece preview
         if (gameState.nextPieceType) {
-            this.drawNextPiecePreview(gameState.nextPieceType, panelX, panelY + 88);
+            this.drawNextPiecePreview(gameState.nextPieceType, panelX, panelY + 176);
         }
     }
 
     drawNextPiecePreview(pieceType, x, y) {
         const blocks = TETROMINO_SHAPES[pieceType];
         const color = TETROMINO_COLORS[pieceType];
-        const previewBlockSize = 4;
+        const previewBlockSize = 8;
 
         this.ctx.fillStyle = color;
         this.ctx.strokeStyle = CONFIG.COLORS.DARKEST;
-        this.ctx.lineWidth = 1;
+        this.ctx.lineWidth = 2;
 
         blocks.forEach(([bx, by]) => {
-            const px = x + bx * previewBlockSize + 8;
+            const px = x + bx * previewBlockSize + 16;
             const py = y + by * previewBlockSize;
             this.ctx.fillRect(px, py, previewBlockSize, previewBlockSize);
             this.ctx.strokeRect(px, py, previewBlockSize, previewBlockSize);
@@ -258,15 +258,15 @@ class Renderer {
 
         // Title
         this.ctx.fillStyle = CONFIG.COLORS.LIGHTEST;
-        this.ctx.font = 'bold 12px monospace';
+        this.ctx.font = 'bold 24px monospace';
         this.ctx.textAlign = 'center';
-        this.ctx.fillText('PHYSICS', centerX, centerY - 20);
-        this.ctx.fillText('TETRIS', centerX, centerY - 6);
+        this.ctx.fillText('PHYSICS', centerX, centerY - 40);
+        this.ctx.fillText('TETRIS', centerX, centerY - 12);
 
         // Press Enter text
-        this.ctx.font = '8px monospace';
-        this.ctx.fillText('Press ENTER', centerX, centerY + 20);
-        this.ctx.fillText('to play', centerX, centerY + 32);
+        this.ctx.font = '16px monospace';
+        this.ctx.fillText('Press ENTER', centerX, centerY + 40);
+        this.ctx.fillText('to play', centerX, centerY + 64);
         this.ctx.textAlign = 'left';
     }
 
@@ -280,7 +280,7 @@ class Renderer {
 
         // PAUSED text
         this.ctx.fillStyle = CONFIG.COLORS.LIGHTEST;
-        this.ctx.font = 'bold 16px monospace';
+        this.ctx.font = 'bold 32px monospace';
         this.ctx.textAlign = 'center';
         this.ctx.fillText('PAUSED', centerX, centerY);
         this.ctx.textAlign = 'left';
@@ -296,13 +296,13 @@ class Renderer {
 
         // GAME OVER text
         this.ctx.fillStyle = CONFIG.COLORS.LIGHTEST;
-        this.ctx.font = 'bold 12px monospace';
+        this.ctx.font = 'bold 24px monospace';
         this.ctx.textAlign = 'center';
-        this.ctx.fillText('GAME OVER', centerX, centerY - 10);
+        this.ctx.fillText('GAME OVER', centerX, centerY - 20);
 
-        this.ctx.font = '8px monospace';
-        this.ctx.fillText('Score: ' + gameState.score, centerX, centerY + 8);
-        this.ctx.fillText('Press ENTER', centerX, centerY + 24);
+        this.ctx.font = '16px monospace';
+        this.ctx.fillText('Score: ' + gameState.score, centerX, centerY + 16);
+        this.ctx.fillText('Press ENTER', centerX, centerY + 48);
         this.ctx.textAlign = 'left';
     }
 

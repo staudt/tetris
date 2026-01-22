@@ -3,9 +3,9 @@
 const CONFIG = {
     // Display Settings
     CANVAS: {
-        WIDTH: 160,
-        HEIGHT: 160,
-        SCALE: 4 // Display scale multiplier (640×640)
+        WIDTH: 320,
+        HEIGHT: 320,
+        SCALE: 4 // Display scale multiplier (1280×1280)
     },
 
     // GameBoy Color Palette
@@ -20,11 +20,11 @@ const CONFIG = {
     GAME: {
         PLAY_WIDTH: 10,      // blocks
         PLAY_HEIGHT: 18,     // blocks
-        BLOCK_SIZE: 8,       // pixels
-        PLAY_OFFSET_X: 16,   // pixels from left edge
-        PLAY_OFFSET_Y: 8,    // pixels from top edge
-        UI_PANEL_X: 104,     // pixels from left edge
-        UI_PANEL_Y: 8        // pixels from top edge
+        BLOCK_SIZE: 16,      // pixels
+        PLAY_OFFSET_X: 32,   // pixels from left edge
+        PLAY_OFFSET_Y: 16,   // pixels from top edge
+        UI_PANEL_X: 208,     // pixels from left edge
+        UI_PANEL_Y: 16       // pixels from top edge
     },
 
     // Physics Parameters
