@@ -8,6 +8,7 @@ class PhysicsWorld {
         });
 
         this.walls = [];
+        this.timeAccumulator = 0;
         this.createWalls();
     }
 
@@ -57,12 +58,28 @@ class PhysicsWorld {
     }
 
     step(deltaTime) {
-        // Fixed timestep for stable physics
-        this.world.step(
-            CONFIG.PHYSICS.TIME_STEP,
-            CONFIG.PHYSICS.VELOCITY_ITERATIONS,
-            CONFIG.PHYSICS.POSITION_ITERATIONS
-        );
+        // Accumulate time and step physics in fixed increments
+        // This ensures consistent physics regardless of frame rate
+        this.timeAccumulator += deltaTime;
+
+        const fixedStep = CONFIG.PHYSICS.TIME_STEP;
+        const maxSteps = 4; // Prevent spiral of death on very slow devices
+        let steps = 0;
+
+        while (this.timeAccumulator >= fixedStep && steps < maxSteps) {
+            this.world.step(
+                fixedStep,
+                CONFIG.PHYSICS.VELOCITY_ITERATIONS,
+                CONFIG.PHYSICS.POSITION_ITERATIONS
+            );
+            this.timeAccumulator -= fixedStep;
+            steps++;
+        }
+
+        // Prevent accumulator from growing too large
+        if (this.timeAccumulator > fixedStep * 2) {
+            this.timeAccumulator = 0;
+        }
     }
 
     // Query bodies in a specific area (for line detection)
