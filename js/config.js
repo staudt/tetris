@@ -44,7 +44,7 @@ const CONFIG = {
 
     // Gameplay Timing
     TIMING: {
-        BASE_FALL_SPEED: 1.0,     // base downward velocity
+        BASE_FALL_SPEED: 1.5,     // base downward velocity
         FAST_FALL_MULTIPLIER: 3.0, // speed when holding down
         LEVEL_SPEED_INCREASE: 0.1, // speed increase per level
         MAX_FALL_SPEED: 5.0,       // maximum fall speed cap

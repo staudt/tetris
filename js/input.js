@@ -234,8 +234,7 @@ class InputHandler {
             tetrominoFactory.applyDownwardForce(activePiece, 2.0);
         } else {
             // Slow fall - force constant slow descent
-            const slowFallSpeed = 1.0;
-            activePiece.setLinearVelocity(planck.Vec2(currentVel.x, slowFallSpeed));
+            activePiece.setLinearVelocity(planck.Vec2(currentVel.x, CONFIG.TIMING.BASE_FALL_SPEED));
         }
     }
 }
