@@ -47,6 +47,13 @@ The game uses an innovative hybrid approach:
 - **Block Size**: 8×8 pixels
 - **Frame Rate**: 60 FPS
 
+## Local Setup
+
+To run locally, you need a basic http server to host the files. If you have Python install, you can just run this from the repository directory to have it running on http://localhost:8000:
+```
+python -m http.server 8000
+```
+
 ## License
 
 MIT. No intention of commercial use
