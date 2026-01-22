@@ -45,9 +45,9 @@ const CONFIG = {
     // Gameplay Timing
     TIMING: {
         BASE_FALL_SPEED: 1.5,     // base downward velocity
-        FAST_FALL_MULTIPLIER: 4.0, // speed when holding down
-        LEVEL_SPEED_INCREASE: 0.5, // speed increase per level
-        MAX_FALL_SPEED: 5.0,       // maximum fall speed cap
+        FAST_FALL_MULTIPLIER: 4.5, // speed when holding down
+        LEVEL_SPEED_INCREASE: 1.0, // speed increase per level
+        MAX_FALL_SPEED: 8.0,       // maximum fall speed cap
         ROTATION_COOLDOWN: 0.15,   // seconds between rotations
         MOVE_COOLDOWN: 0.1         // seconds between moves
     },
@@ -63,7 +63,7 @@ const CONFIG = {
 
     // Line Detection
     LINE_DETECTION: {
-        ROW_TOLERANCE: 0.3,        // units above/below row center
+        ROW_TOLERANCE: 0.2,        // units above/below row center
         MIN_BLOCKS_FOR_LINE: 9     // blocks needed to complete line
     },
 
