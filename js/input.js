@@ -227,14 +227,20 @@ class InputHandler {
             tetrominoFactory.stopHorizontalMovement(activePiece);
         }
 
+        // Calculate fall speed based on level
+        const level = this.gameState.level;
+        const baseFallSpeed = CONFIG.TIMING.BASE_FALL_SPEED + (level - 1) * CONFIG.TIMING.LEVEL_SPEED_INCREASE;
+        const fallSpeed = Math.min(baseFallSpeed, CONFIG.TIMING.MAX_FALL_SPEED);
+
         // Gravity control: slow fall normally, fast fall when holding down
         const currentVel = activePiece.getLinearVelocity();
         if (this.keys['ArrowDown']) {
-            // Fast fall - let gravity work naturally
-            tetrominoFactory.applyDownwardForce(activePiece, 2.0);
+            // Fast fall - apply multiplier to current level speed
+            const fastFallSpeed = fallSpeed * CONFIG.TIMING.FAST_FALL_MULTIPLIER;
+            activePiece.setLinearVelocity(planck.Vec2(currentVel.x, Math.min(fastFallSpeed, CONFIG.TIMING.MAX_FALL_SPEED * 2)));
         } else {
-            // Slow fall - force constant slow descent
-            activePiece.setLinearVelocity(planck.Vec2(currentVel.x, CONFIG.TIMING.BASE_FALL_SPEED));
+            // Normal fall - speed increases with level
+            activePiece.setLinearVelocity(planck.Vec2(currentVel.x, fallSpeed));
         }
     }
 }
