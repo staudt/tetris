@@ -260,13 +260,17 @@ class Renderer {
         this.ctx.fillStyle = CONFIG.COLORS.LIGHTEST;
         this.ctx.font = 'bold 24px monospace';
         this.ctx.textAlign = 'center';
-        this.ctx.fillText('PHYSICS', centerX, centerY - 40);
-        this.ctx.fillText('TETRIS', centerX, centerY - 12);
+        this.ctx.fillText('Tetris', centerX, centerY - 40);
+        this.ctx.fillText('with Physics', centerX, centerY - 12);
 
         // Press any key text
         this.ctx.font = '16px monospace';
         this.ctx.fillText('Press any key', centerX, centerY + 40);
         this.ctx.fillText('to play', centerX, centerY + 64);
+
+        // Credits
+        this.ctx.font = '10px monospace';
+        this.ctx.fillText('Made by Andre, Ricardo and Opus 4.5', centerX, CONFIG.CANVAS.HEIGHT - 16);
         this.ctx.textAlign = 'left';
     }
 

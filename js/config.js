@@ -23,7 +23,7 @@ const CONFIG = {
         BLOCK_SIZE: 16,      // pixels
         PLAY_OFFSET_X: 32,   // pixels from left edge
         PLAY_OFFSET_Y: 16,   // pixels from top edge
-        UI_PANEL_X: 208,     // pixels from left edge
+        UI_PANEL_X: 216,     // pixels from left edge
         UI_PANEL_Y: 16       // pixels from top edge
     },
 
@@ -35,6 +35,7 @@ const CONFIG = {
         PIECE_DENSITY: 1.0,
         PIECE_FRICTION: 0.5,
         PIECE_RESTITUTION: 0.05,
+        WALL_SLACK: 0.2,          // extra space on each side of play area for easier fitting
         TIME_STEP: 1/60,          // 60 FPS
         VELOCITY_ITERATIONS: 8,
         POSITION_ITERATIONS: 3,
@@ -63,7 +64,7 @@ const CONFIG = {
 
     // Line Detection
     LINE_DETECTION: {
-        ROW_TOLERANCE: 0.3,        // units above/below row center
+        ROW_TOLERANCE: 0.2,        // units above/below row center
         MIN_BLOCKS_FOR_LINE: 10     // blocks needed to complete line
     },
 

@@ -16,6 +16,7 @@ class PhysicsWorld {
         const playWidth = CONFIG.GAME.PLAY_WIDTH;
         const playHeight = CONFIG.GAME.PLAY_HEIGHT;
         const wallThickness = 0.5;
+        const slack = CONFIG.PHYSICS.WALL_SLACK || 0;
 
         // Bottom wall
         const bottomWall = this.world.createBody({
@@ -23,17 +24,17 @@ class PhysicsWorld {
             position: planck.Vec2(playWidth / 2, playHeight + wallThickness / 2)
         });
         bottomWall.createFixture({
-            shape: planck.Box(playWidth / 2 + wallThickness, wallThickness),
+            shape: planck.Box(playWidth / 2 + wallThickness + slack, wallThickness),
             friction: CONFIG.PHYSICS.WALL_FRICTION,
             restitution: CONFIG.PHYSICS.WALL_RESTITUTION
         });
         bottomWall.setUserData({ type: 'wall', side: 'bottom' });
         this.walls.push(bottomWall);
 
-        // Left wall
+        // Left wall - shifted left by slack amount
         const leftWall = this.world.createBody({
             type: 'static',
-            position: planck.Vec2(-wallThickness / 2, playHeight / 2)
+            position: planck.Vec2(-wallThickness / 2 - slack, playHeight / 2)
         });
         leftWall.createFixture({
             shape: planck.Box(wallThickness, playHeight / 2 + wallThickness),
@@ -43,10 +44,10 @@ class PhysicsWorld {
         leftWall.setUserData({ type: 'wall', side: 'left' });
         this.walls.push(leftWall);
 
-        // Right wall
+        // Right wall - shifted right by slack amount
         const rightWall = this.world.createBody({
             type: 'static',
-            position: planck.Vec2(playWidth + wallThickness / 2, playHeight / 2)
+            position: planck.Vec2(playWidth + wallThickness / 2 + slack, playHeight / 2)
         });
         rightWall.createFixture({
             shape: planck.Box(wallThickness, playHeight / 2 + wallThickness),
