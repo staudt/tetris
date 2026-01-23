@@ -37,7 +37,7 @@ The game uses an innovative hybrid approach:
 
 1. **Active Piece (Falling)**: Kinematic physics body with direct player control for responsive feel
 2. **Settled Pieces**: Dynamic physics bodies with full gravity and collision simulation
-3. **Line Detection**: AABB queries at each row height to detect completed lines. It assumes 9 instead of 10 pieces per line to account for physics
+3. **Line Detection**: AABB queries at each row height to detect completed lines
 
 ### GameBoy Specifications
 
