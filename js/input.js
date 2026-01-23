@@ -61,6 +61,31 @@ class InputHandler {
                 this.handleActionButton();
             });
         }
+
+        // Music toggle button
+        const musicBtn = document.getElementById('btn-music');
+        if (musicBtn) {
+            musicBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                if (soundManager) {
+                    soundManager.toggleMusic();
+                    this.updateMusicButtonLabel();
+                }
+            }, { passive: false });
+
+            musicBtn.addEventListener('click', (e) => {
+                if (soundManager) {
+                    soundManager.toggleMusic();
+                    this.updateMusicButtonLabel();
+                }
+            });
+        }
+    }
+
+    updateMusicButtonLabel() {
+        const musicBtn = document.getElementById('btn-music');
+        if (!musicBtn || !soundManager) return;
+        musicBtn.textContent = soundManager.musicEnabled ? '🎵' : '🔇';
     }
 
     handleActionButton() {
@@ -114,7 +139,7 @@ class InputHandler {
 
     // Check if key is a game control key
     isGameKey(key) {
-        const gameKeys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', ' ', 'Escape', 'Enter', 'w', 'W', 'a', 'A', 's', 'S', 'd', 'D'];
+        const gameKeys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', ' ', 'Escape', 'Enter', 'p', 'P', 'w', 'W', 'a', 'A', 's', 'S', 'd', 'D'];
         return gameKeys.includes(key);
     }
 
@@ -122,6 +147,15 @@ class InputHandler {
         // Prevent default for game keys
         if (this.isGameKey(e.key)) {
             e.preventDefault();
+        }
+
+        // Music toggle (works in any state)
+        if (e.key === 'm' || e.key === 'M') {
+            if (soundManager) {
+                soundManager.toggleMusic();
+                this.updateMusicButtonLabel();
+            }
+            return;
         }
 
         // Normalize WASD to arrow keys
@@ -150,7 +184,7 @@ class InputHandler {
         }
 
         // Pause/Resume
-        if (e.key === 'Escape') {
+        if (e.key === 'Escape' || e.key === 'p' || e.key === 'P') {
             this.gameState.togglePause();
             this.updateActionButtonLabel();
             return;

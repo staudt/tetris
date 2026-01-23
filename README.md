@@ -1,8 +1,12 @@
 # Physics Tetris - GameBoy Edition
 
-A Tetris game with physics. You can [play online here](https://staudt.github.io/tetris) 🎮. Works on phone browsers too!
+A Tetris game with physics. You can **[play online here](https://staudt.github.io/tetris)** 🎮. It works on mobile browsers too!
 
-[![Screenshot](media/screenshot.jpg)](https://staudt.github.io/tetris)
+<p align="center">
+  <a href="https://staudt.github.io/tetris">
+    <img src="media/screenshot.jpg" alt="Screenshot">
+  </a>
+</p>
 
 ### Controls
 
@@ -13,7 +17,8 @@ A Tetris game with physics. You can [play online here](https://staudt.github.io/
 | **↑ Up Arrow** | Rotate piece clockwise (90°) |
 | **↓ Down Arrow** | Soft drop (faster fall) |
 | **SPACE** | Hard drop (instant fall + settle) |
-| **ESC** | Pause/Resume game |
+| **ESC** or **P** | Pause/Resume game |
+| **M** | Mute theme song |
 | **ENTER** | Start game / Restart after game over |
 
 ### Scoring

@@ -127,6 +127,16 @@ class SoundManager {
     setEnabled(enabled) {
         this.enabled = enabled;
     }
+
+    toggleMusic() {
+        this.musicEnabled = !this.musicEnabled;
+        if (!this.musicEnabled && this.music) {
+            this.music.pause();
+        } else if (this.musicEnabled && this.music) {
+            this.music.play().catch(() => {});
+        }
+        return this.musicEnabled;
+    }
 }
 
 // Global sound manager instance
