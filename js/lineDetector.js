@@ -68,11 +68,15 @@ class LineDetector {
             } catch (e) {}
         });
 
-        // Check for empty bodies
+        // Check for empty bodies and split disconnected fixtures
         affectedBodies.forEach(body => {
             try {
                 if (!body.getFixtureList()) {
+                    // Body has no fixtures left, destroy it
                     this.physicsWorld.destroyBody(body);
+                } else {
+                    // Body still has fixtures - check if they're disconnected
+                    this.splitDisconnectedFixtures(body);
                 }
             } catch (e) {}
         });
@@ -319,6 +323,161 @@ class LineDetector {
             gameState.level = newLevel;
             if (soundManager) soundManager.play('levelup');
         }
+    }
+
+    // Get the local center position of a fixture (relative to body)
+    getFixtureLocalCenter(fixture) {
+        const shape = fixture.getShape();
+        if (shape.getType() === 'polygon') {
+            let sumX = 0, sumY = 0;
+            for (let i = 0; i < shape.m_count; i++) {
+                sumX += shape.m_vertices[i].x;
+                sumY += shape.m_vertices[i].y;
+            }
+            return { x: sumX / shape.m_count, y: sumY / shape.m_count };
+        }
+        return { x: 0, y: 0 };
+    }
+
+    // Find connected components of fixtures in a body
+    // Two fixtures are adjacent if their centers are ~1 unit apart (sharing an edge)
+    findConnectedComponents(body) {
+        const fixtures = [];
+        let fixture = body.getFixtureList();
+        while (fixture) {
+            fixtures.push({
+                fixture: fixture,
+                center: this.getFixtureLocalCenter(fixture)
+            });
+            fixture = fixture.getNext();
+        }
+
+        if (fixtures.length <= 1) {
+            return [fixtures]; // Single fixture or empty - no splitting needed
+        }
+
+        // Use union-find to group connected fixtures
+        const parent = fixtures.map((_, i) => i);
+
+        const find = (i) => {
+            if (parent[i] !== i) parent[i] = find(parent[i]);
+            return parent[i];
+        };
+
+        const union = (i, j) => {
+            parent[find(i)] = find(j);
+        };
+
+        // Check each pair - fixtures are adjacent if centers are ~1 unit apart
+        const adjacencyThreshold = 1.1; // Slightly more than 1 to account for floating point
+
+        for (let i = 0; i < fixtures.length; i++) {
+            for (let j = i + 1; j < fixtures.length; j++) {
+                const dx = Math.abs(fixtures[i].center.x - fixtures[j].center.x);
+                const dy = Math.abs(fixtures[i].center.y - fixtures[j].center.y);
+
+                // Adjacent if sharing an edge (one dimension ~1, other ~0)
+                const isHorizontallyAdjacent = dx < adjacencyThreshold && dx > 0.5 && dy < 0.5;
+                const isVerticallyAdjacent = dy < adjacencyThreshold && dy > 0.5 && dx < 0.5;
+
+                if (isHorizontallyAdjacent || isVerticallyAdjacent) {
+                    union(i, j);
+                }
+            }
+        }
+
+        // Group fixtures by their root parent
+        const components = new Map();
+        for (let i = 0; i < fixtures.length; i++) {
+            const root = find(i);
+            if (!components.has(root)) {
+                components.set(root, []);
+            }
+            components.get(root).push(fixtures[i]);
+        }
+
+        return Array.from(components.values());
+    }
+
+    // Split disconnected fixtures into separate bodies
+    splitDisconnectedFixtures(body) {
+        const components = this.findConnectedComponents(body);
+
+        // If only one component, nothing to split
+        if (components.length <= 1) {
+            return;
+        }
+
+        const userData = body.getUserData();
+        const bodyAngle = body.getAngle();
+
+        // Keep the first (largest) component on the original body
+        // Create new bodies for the rest
+        components.sort((a, b) => b.length - a.length);
+
+        for (let i = 1; i < components.length; i++) {
+            const component = components[i];
+
+            // Calculate center of mass for this component
+            let centerX = 0, centerY = 0;
+            component.forEach(item => {
+                centerX += item.center.x;
+                centerY += item.center.y;
+            });
+            centerX /= component.length;
+            centerY /= component.length;
+
+            // Get world position for the new body center
+            const localCenter = planck.Vec2(centerX, centerY);
+            const worldCenter = body.getWorldPoint(localCenter);
+
+            // Create new body at this position
+            const newBody = this.physicsWorld.world.createBody({
+                type: 'dynamic',
+                position: worldCenter,
+                angle: bodyAngle,
+                linearDamping: 0.1,
+                angularDamping: 0.5,
+                fixedRotation: false
+            });
+
+            // Copy velocity from original body
+            newBody.setLinearVelocity(body.getLinearVelocity());
+            newBody.setAngularVelocity(body.getAngularVelocity());
+
+            // Move fixtures to new body
+            component.forEach(item => {
+                const oldFixture = item.fixture;
+                const shape = oldFixture.getShape();
+
+                // Create new fixture with offset relative to new center
+                const newOffsetX = item.center.x - centerX;
+                const newOffsetY = item.center.y - centerY;
+
+                newBody.createFixture({
+                    shape: planck.Box(0.45, 0.45, planck.Vec2(newOffsetX, newOffsetY), 0),
+                    density: CONFIG.PHYSICS.PIECE_DENSITY,
+                    friction: CONFIG.PHYSICS.PIECE_FRICTION,
+                    restitution: CONFIG.PHYSICS.PIECE_RESTITUTION
+                });
+
+                // Remove from original body
+                body.destroyFixture(oldFixture);
+            });
+
+            // Copy user data to new body
+            newBody.setUserData({
+                type: 'piece',
+                pieceType: userData ? userData.pieceType : 'fragment',
+                color: userData ? userData.color : '#9bbc0f',
+                isActive: false,
+                spawnTime: Date.now(),
+                settleTimer: 0
+            });
+        }
+
+        // Update the original body's center of mass if needed
+        // (Planck.js handles this automatically when fixtures change)
     }
 
     // Check if game is over (pieces reached top)
