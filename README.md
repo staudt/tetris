@@ -57,3 +57,4 @@ python -m http.server 8000
 ## License
 
 MIT. No intention of commercial use
+**Theme Song** was generated with [Suno](https://suno.com/), which is free for non-commercial use only

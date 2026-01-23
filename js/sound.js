@@ -4,7 +4,10 @@ class SoundManager {
     constructor() {
         this.sounds = {};
         this.enabled = true;
+        this.music = null;
+        this.musicEnabled = true;
         this.loadSounds();
+        this.loadMusic();
     }
 
     loadSounds() {
@@ -19,6 +22,30 @@ class SoundManager {
         for (const [name, path] of Object.entries(soundFiles)) {
             this.sounds[name] = new Audio(path);
             this.sounds[name].preload = 'auto';
+        }
+    }
+
+    loadMusic() {
+        this.music = new Audio('media/theme.mp3');
+        this.music.loop = true;
+        this.music.volume = 0.5;
+        this.music.preload = 'auto';
+    }
+
+    playMusic() {
+        if (!this.musicEnabled || !this.music) {
+            return;
+        }
+        this.music.currentTime = 0;
+        this.music.play().catch(() => {
+            // Ignore autoplay errors (browser policy)
+        });
+    }
+
+    stopMusic() {
+        if (this.music) {
+            this.music.pause();
+            this.music.currentTime = 0;
         }
     }
 

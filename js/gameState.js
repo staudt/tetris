@@ -20,6 +20,7 @@ class GameState {
     start() {
         this.state = CONFIG.STATE.PLAYING;
         this.spawnNextPiece();
+        if (soundManager) soundManager.playMusic();
     }
 
     reset() {
@@ -95,7 +96,10 @@ class GameState {
         // Check for game over (only if not animating)
         if (!this.lineDetector.isAnimating() && this.lineDetector.isGameOver()) {
             this.state = CONFIG.STATE.GAME_OVER;
-            if (soundManager) soundManager.play('gameover');
+            if (soundManager) {
+                soundManager.stopMusic();
+                soundManager.play('gameover');
+            }
         }
     }
 
