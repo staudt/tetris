@@ -17,21 +17,30 @@ class SoundManager {
         const unlock = () => {
             if (this.unlocked) return;
 
-            // Play and immediately pause to unlock audio on mobile
+            // Mute, play, and pause to silently unlock audio on mobile
             if (this.music) {
+                const originalVolume = this.music.volume;
+                this.music.volume = 0;
                 this.music.play().then(() => {
                     this.music.pause();
                     this.music.currentTime = 0;
+                    this.music.volume = originalVolume;
                     this.unlocked = true;
-                }).catch(() => {});
+                }).catch(() => {
+                    this.music.volume = originalVolume;
+                });
             }
 
-            // Also unlock sound effects
+            // Also unlock sound effects (muted)
             for (const sound of Object.values(this.sounds)) {
+                sound.volume = 0;
                 sound.play().then(() => {
                     sound.pause();
                     sound.currentTime = 0;
-                }).catch(() => {});
+                    sound.volume = 1;
+                }).catch(() => {
+                    sound.volume = 1;
+                });
             }
         };
 
