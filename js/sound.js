@@ -6,8 +6,39 @@ class SoundManager {
         this.enabled = true;
         this.music = null;
         this.musicEnabled = true;
+        this.unlocked = false;
         this.loadSounds();
         this.loadMusic();
+        this.setupUnlock();
+    }
+
+    // Mobile browsers require user interaction to unlock audio
+    setupUnlock() {
+        const unlock = () => {
+            if (this.unlocked) return;
+
+            // Play and immediately pause to unlock audio on mobile
+            if (this.music) {
+                this.music.play().then(() => {
+                    this.music.pause();
+                    this.music.currentTime = 0;
+                    this.unlocked = true;
+                }).catch(() => {});
+            }
+
+            // Also unlock sound effects
+            for (const sound of Object.values(this.sounds)) {
+                sound.play().then(() => {
+                    sound.pause();
+                    sound.currentTime = 0;
+                }).catch(() => {});
+            }
+        };
+
+        // Listen for first interaction
+        ['touchstart', 'touchend', 'click', 'keydown'].forEach(event => {
+            document.addEventListener(event, unlock, { once: true });
+        });
     }
 
     loadSounds() {
@@ -38,7 +69,12 @@ class SoundManager {
         }
         this.music.currentTime = 0;
         this.music.play().catch(() => {
-            // Ignore autoplay errors (browser policy)
+            // Retry after a short delay (gives unlock time to complete)
+            setTimeout(() => {
+                if (this.music && this.musicEnabled) {
+                    this.music.play().catch(() => {});
+                }
+            }, 100);
         });
     }
 

@@ -1,6 +1,8 @@
 # Physics Tetris - GameBoy Edition
 
-A Tetris game with physics. You can [play online here](https://staudt.github.io/tetris) 🎮
+A Tetris game with physics. You can [play online here](https://staudt.github.io/tetris) 🎮. Works on phone browsers too!
+
+[![Screenshot](media/screenshot.jpg)](https://staudt.github.io/tetris)
 
 ### Controls
 
