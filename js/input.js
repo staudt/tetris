@@ -65,6 +65,9 @@ class InputHandler {
         // Music toggle button
         const musicBtn = document.getElementById('btn-music');
         if (musicBtn) {
+            // Initialize button label based on saved music state
+            this.updateMusicButtonLabel();
+
             musicBtn.addEventListener('touchstart', (e) => {
                 e.preventDefault();
                 if (soundManager) {
@@ -97,7 +100,11 @@ class InputHandler {
         } else if (this.gameState.state === CONFIG.STATE.PAUSED) {
             this.gameState.togglePause();
         } else if (this.gameState.state === CONFIG.STATE.GAME_OVER) {
-            this.gameState.reset();
+            // Check if enough time has passed since game over
+            const timeSinceGameOver = Date.now() - this.gameState.gameOverTime;
+            if (timeSinceGameOver >= CONFIG.TIMING.GAME_OVER_DELAY) {
+                this.gameState.reset();
+            }
         }
         this.updateActionButtonLabel();
     }
@@ -169,8 +176,12 @@ class InputHandler {
         // Handle state-specific controls
         if (this.gameState.state === CONFIG.STATE.GAME_OVER) {
             if (this.isGameKey(e.key)) {
-                this.gameState.reset();
-                this.updateActionButtonLabel();
+                // Check if enough time has passed since game over
+                const timeSinceGameOver = Date.now() - this.gameState.gameOverTime;
+                if (timeSinceGameOver >= CONFIG.TIMING.GAME_OVER_DELAY) {
+                    this.gameState.reset();
+                    this.updateActionButtonLabel();
+                }
             }
             return;
         }

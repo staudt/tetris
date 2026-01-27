@@ -97,17 +97,20 @@ class Renderer {
         ctx.fillStyle = CONFIG.COLORS.DARKEST;
         ctx.font = '16px monospace';
 
+        // HIGH label
+        ctx.fillText('HIGH', panelX, panelY + 16);
+
         // SCORE label
-        ctx.fillText('SCORE', panelX, panelY + 16);
+        ctx.fillText('SCORE', panelX, panelY + 64);
 
         // LEVEL label
-        ctx.fillText('LEVEL', panelX, panelY + 64);
+        ctx.fillText('LEVEL', panelX, panelY + 112);
 
         // LINES label
-        ctx.fillText('LINES', panelX, panelY + 112);
+        ctx.fillText('LINES', panelX, panelY + 160);
 
         // NEXT label
-        ctx.fillText('NEXT', panelX, panelY + 160);
+        ctx.fillText('NEXT', panelX, panelY + 208);
     }
 
     render(physicsWorld, gameState) {
@@ -216,18 +219,21 @@ class Renderer {
         this.ctx.fillStyle = CONFIG.COLORS.DARKEST;
         this.ctx.font = '16px monospace';
 
+        // High score value
+        this.ctx.fillText(gameState.highScore.toString().padStart(6, '0'), panelX, panelY + 40);
+
         // Score value
-        this.ctx.fillText(gameState.score.toString().padStart(6, '0'), panelX, panelY + 40);
+        this.ctx.fillText(gameState.score.toString().padStart(6, '0'), panelX, panelY + 88);
 
         // Level value
-        this.ctx.fillText(gameState.level.toString().padStart(2, ' '), panelX + 16, panelY + 88);
+        this.ctx.fillText(gameState.level.toString().padStart(2, ' '), panelX + 16, panelY + 136);
 
         // Lines value
-        this.ctx.fillText(gameState.lines.toString().padStart(3, ' '), panelX + 16, panelY + 136);
+        this.ctx.fillText(gameState.lines.toString().padStart(3, ' '), panelX + 16, panelY + 184);
 
         // Draw next piece preview
         if (gameState.nextPieceType) {
-            this.drawNextPiecePreview(gameState.nextPieceType, panelX, panelY + 176);
+            this.drawNextPiecePreview(gameState.nextPieceType, panelX, panelY + 224);
         }
     }
 
@@ -268,8 +274,11 @@ class Renderer {
         this.ctx.fillText('Press any key', centerX, centerY + 40);
         this.ctx.fillText('to play', centerX, centerY + 64);
 
+        // Controls hint
+        this.ctx.font = '12px monospace';
+        this.ctx.fillText('Press M for music during gameplay', centerX, CONFIG.CANVAS.HEIGHT - 36);
+
         // Credits
-        this.ctx.font = '10px monospace';
         this.ctx.fillText('Made by Andre, Ricardo and Opus 4.5', centerX, CONFIG.CANVAS.HEIGHT - 16);
         this.ctx.textAlign = 'left';
     }

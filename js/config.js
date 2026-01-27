@@ -50,7 +50,8 @@ const CONFIG = {
         LEVEL_SPEED_INCREASE: 1.0, // speed increase per level
         MAX_FALL_SPEED: 8.0,       // maximum fall speed cap
         ROTATION_COOLDOWN: 0.15,   // seconds between rotations
-        MOVE_COOLDOWN: 0.1         // seconds between moves
+        MOVE_COOLDOWN: 0.1,        // seconds between moves
+        GAME_OVER_DELAY: 500       // milliseconds before allowing restart
     },
 
     // Scoring

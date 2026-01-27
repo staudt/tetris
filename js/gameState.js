@@ -10,11 +10,29 @@ class GameState {
         this.score = 0;
         this.level = 1;
         this.lines = 0;
+        this.highScore = this.loadHighScore();
 
         this.activePiece = null;
         this.nextPieceType = this.tetrominoFactory.getRandomType();
 
         this.lastUpdateTime = 0;
+    }
+
+    loadHighScore() {
+        try {
+            const saved = localStorage.getItem('tetris_highscore');
+            return saved ? parseInt(saved, 10) : 0;
+        } catch (e) {
+            return 0;
+        }
+    }
+
+    saveHighScore() {
+        try {
+            localStorage.setItem('tetris_highscore', this.highScore.toString());
+        } catch (e) {
+            // localStorage not available
+        }
     }
 
     start() {
@@ -96,6 +114,14 @@ class GameState {
         // Check for game over (only if not animating)
         if (!this.lineDetector.isAnimating() && this.lineDetector.isGameOver()) {
             this.state = CONFIG.STATE.GAME_OVER;
+            this.gameOverTime = Date.now();
+
+            // Update high score if needed
+            if (this.score > this.highScore) {
+                this.highScore = this.score;
+                this.saveHighScore();
+            }
+
             if (soundManager) {
                 soundManager.stopMusic();
                 soundManager.play('gameover');

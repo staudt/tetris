@@ -5,48 +5,62 @@ class SoundManager {
         this.sounds = {};
         this.enabled = true;
         this.music = null;
-        this.musicEnabled = true;
+        this.musicEnabled = this.loadMusicState();
         this.unlocked = false;
         this.loadSounds();
         this.loadMusic();
         this.setupUnlock();
     }
 
+    loadMusicState() {
+        try {
+            const saved = localStorage.getItem('tetris_music_enabled');
+            return saved !== null ? saved === 'true' : false; // Default to false
+        } catch (e) {
+            return false;
+        }
+    }
+
+    saveMusicState() {
+        try {
+            localStorage.setItem('tetris_music_enabled', this.musicEnabled.toString());
+        } catch (e) {
+            // localStorage not available
+        }
+    }
+
     // Mobile browsers require user interaction to unlock audio
     setupUnlock() {
         const unlock = () => {
             if (this.unlocked) return;
+            this.unlocked = true;
 
-            // Mute, play, and pause to silently unlock audio on mobile
-            if (this.music) {
-                const originalVolume = this.music.volume;
-                this.music.volume = 0;
-                this.music.play().then(() => {
-                    this.music.pause();
-                    this.music.currentTime = 0;
-                    this.music.volume = originalVolume;
-                    this.unlocked = true;
-                }).catch(() => {
-                    this.music.volume = originalVolume;
-                });
-            }
+            // Silently unlock audio elements by playing muted then pausing
+            const unlockAudio = (audio) => {
+                if (!audio) return;
+                const vol = audio.volume;
+                audio.volume = 0;
+                const playPromise = audio.play();
+                if (playPromise) {
+                    playPromise.then(() => {
+                        audio.pause();
+                        audio.currentTime = 0;
+                        audio.volume = vol;
+                    }).catch(() => {
+                        audio.volume = vol;
+                    });
+                }
+            };
 
-            // Also unlock sound effects (muted)
+            unlockAudio(this.music);
             for (const sound of Object.values(this.sounds)) {
-                sound.volume = 0;
-                sound.play().then(() => {
-                    sound.pause();
-                    sound.currentTime = 0;
-                    sound.volume = 1;
-                }).catch(() => {
-                    sound.volume = 1;
-                });
+                unlockAudio(sound);
             }
         };
 
-        // Listen for first interaction
+        // Listen for first interaction - use capture to run before game handlers
         ['touchstart', 'touchend', 'click', 'keydown'].forEach(event => {
-            document.addEventListener(event, unlock, { once: true });
+            document.addEventListener(event, unlock, { once: true, capture: true });
         });
     }
 
@@ -78,12 +92,15 @@ class SoundManager {
         }
         this.music.currentTime = 0;
         this.music.play().catch(() => {
-            // Retry after a short delay (gives unlock time to complete)
-            setTimeout(() => {
-                if (this.music && this.musicEnabled) {
-                    this.music.play().catch(() => {});
-                }
-            }, 100);
+            // Retry with increasing delays for browsers with strict autoplay
+            const retryDelays = [50, 150, 300];
+            retryDelays.forEach(delay => {
+                setTimeout(() => {
+                    if (this.music && this.musicEnabled && this.music.paused) {
+                        this.music.play().catch(() => {});
+                    }
+                }, delay);
+            });
         });
     }
 
@@ -130,6 +147,7 @@ class SoundManager {
 
     toggleMusic() {
         this.musicEnabled = !this.musicEnabled;
+        this.saveMusicState();
         if (!this.musicEnabled && this.music) {
             this.music.pause();
         } else if (this.musicEnabled && this.music) {
